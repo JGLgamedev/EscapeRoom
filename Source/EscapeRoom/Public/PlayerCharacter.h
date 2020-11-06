@@ -31,4 +31,6 @@ public:
 	void LookUp(float AxisValue);
 	void LookRight(float AxisValue);
 
+	void SetHUDInfoText(FText NewInfoText);
+
 };

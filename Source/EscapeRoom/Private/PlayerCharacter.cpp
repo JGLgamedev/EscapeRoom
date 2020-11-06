@@ -3,6 +3,8 @@
 
 #include "PlayerCharacter.h"
 #include "Components/InputComponent.h"
+#include "EscapeRoomPlayerController.h"
+#include "HUDWidget.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -55,4 +57,25 @@ void APlayerCharacter::LookUp(float AxisValue)
 void APlayerCharacter::LookRight(float AxisValue) 
 {
 	AddControllerYawInput(AxisValue);
+}
+
+void APlayerCharacter::SetHUDInfoText(FText NewInfoText) 
+{
+	AController* ControllerRef = GetController();
+	if(ControllerRef != nullptr)
+	{
+		AEscapeRoomPlayerController* ERControllerRef = Cast<AEscapeRoomPlayerController>(ControllerRef);
+		if(ERControllerRef != nullptr)
+		{
+			UUserWidget* UserWidgetRef = ERControllerRef->GetHUD();
+			if(UserWidgetRef != nullptr)
+			{
+				UHUDWidget* HUDWidgetRef = Cast<UHUDWidget>(UserWidgetRef);
+				if(HUDWidgetRef != nullptr)
+				{
+					HUDWidgetRef->SetInfoText(NewInfoText);
+				}
+			}
+		}
+	}
 }
