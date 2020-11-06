@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "EscapeRoomPlayerController.generated.h"
 
+class UUserWidget;
+
 /**
  * 
  */
@@ -14,4 +16,16 @@ class ESCAPEROOM_API AEscapeRoomPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> HUDClass;
+
+	UPROPERTY()
+	UUserWidget* HUD;
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	UUserWidget* GetHUD() const;
+
 };
