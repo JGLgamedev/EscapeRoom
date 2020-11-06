@@ -11,6 +11,9 @@ class ESCAPEROOM_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
+	float PlayerReach = 100.f;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -31,6 +34,8 @@ public:
 	void LookUp(float AxisValue);
 	void LookRight(float AxisValue);
 
+	void ReachInFront(FHitResult& HitResult);
 	void SetHUDInfoText(FText NewInfoText);
+
 
 };

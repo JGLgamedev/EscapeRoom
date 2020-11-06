@@ -2,6 +2,7 @@
 
 
 #include "PlayerCharacter.h"
+#include "Engine/World.h"
 #include "Components/InputComponent.h"
 #include "EscapeRoomPlayerController.h"
 #include "HUDWidget.h"
@@ -25,6 +26,15 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FHitResult HitResult;
+	ReachInFront(HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if(HitActor != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HIT"));
+	}
 
 }
 
@@ -57,6 +67,17 @@ void APlayerCharacter::LookUp(float AxisValue)
 void APlayerCharacter::LookRight(float AxisValue) 
 {
 	AddControllerYawInput(AxisValue);
+}
+
+void APlayerCharacter::ReachInFront(FHitResult& HitResult)
+{
+	FVector LineTraceStart;
+	FRotator PlayerRotation;
+
+	GetController()->GetPlayerViewPoint(LineTraceStart, PlayerRotation);
+	FVector LineTraceEnd = LineTraceStart + PlayerRotation.Vector() * PlayerReach;
+	
+	GetWorld()->LineTraceSingleByChannel(HitResult, LineTraceStart, LineTraceEnd, ECC_Visibility);
 }
 
 void APlayerCharacter::SetHUDInfoText(FText NewInfoText) 
