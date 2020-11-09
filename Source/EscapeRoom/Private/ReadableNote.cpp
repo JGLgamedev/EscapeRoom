@@ -41,7 +41,7 @@ void AReadableNote::Tick(float DeltaTime)
 
 FText AReadableNote::GetInfoText() 
 {
-	return FText::FromString("Read");
+	return InfoText;
 }
 
 void AReadableNote::Interact(AActor* Caller) 

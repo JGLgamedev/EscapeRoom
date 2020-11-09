@@ -18,8 +18,11 @@ class ESCAPEROOM_API AReadableNote : public AActor, public IInteractInterface
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> NoteWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	FText InfoText;
 
 	UPROPERTY()
 	UUserWidget* NoteWidget;
