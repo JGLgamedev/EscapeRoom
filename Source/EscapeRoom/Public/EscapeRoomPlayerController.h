@@ -20,12 +20,19 @@ class ESCAPEROOM_API AEscapeRoomPlayerController : public APlayerController
 	TSubclassOf<UUserWidget> HUDClass;
 
 	UPROPERTY()
-	UUserWidget* HUD;
+	UUserWidget* HUD = nullptr;
+
+	UPROPERTY()
+	UUserWidget* FocusWidget = nullptr;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
 	UUserWidget* GetHUD() const;
+	void SetHUDInfoText(FText NewHUDInfoText);
+
+	void SetFocusWidget(UUserWidget* NewFocusWidget);
+	UUserWidget* GetFocusWidget() const;
 
 };

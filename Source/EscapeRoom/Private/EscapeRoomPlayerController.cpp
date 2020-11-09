@@ -3,6 +3,7 @@
 
 #include "EscapeRoomPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "HUDWidget.h"
 
 void AEscapeRoomPlayerController::BeginPlay() 
 {
@@ -19,4 +20,34 @@ void AEscapeRoomPlayerController::BeginPlay()
 UUserWidget* AEscapeRoomPlayerController::GetHUD() const
 {
     return HUD;
+}
+
+void AEscapeRoomPlayerController::SetHUDInfoText(FText NewHUDInfoText) 
+{
+    if(HUD != nullptr)
+    {
+        UHUDWidget* HUDWidget = Cast<UHUDWidget>(HUD);
+        if(HUDWidget != nullptr)
+        {
+            HUDWidget->SetInfoText(NewHUDInfoText);
+        }
+    }
+}
+
+void AEscapeRoomPlayerController::SetFocusWidget(UUserWidget* NewFocusWidget) 
+{
+    if(FocusWidget != nullptr)
+    {
+        FocusWidget->RemoveFromParent();
+    }
+    FocusWidget = NewFocusWidget;
+    if(FocusWidget != nullptr)
+    {
+        FocusWidget->AddToViewport();
+    }
+}
+
+UUserWidget* AEscapeRoomPlayerController::GetFocusWidget() const
+{
+    return FocusWidget;
 }
