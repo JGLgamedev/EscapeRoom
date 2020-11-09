@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+class AEscapeRoomPlayerController;
+
 UCLASS()
 class ESCAPEROOM_API APlayerCharacter : public ACharacter
 {
@@ -13,6 +15,14 @@ class ESCAPEROOM_API APlayerCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere)
 	float PlayerReach = 100.f;
+
+	UPROPERTY()
+	AActor* FocusedActor = nullptr;
+
+	UPROPERTY()
+	AEscapeRoomPlayerController* ER_PlayerControllerRef = nullptr;
+
+	bool bPlayerCanMove = true;
 
 public:
 	// Sets default values for this character's properties
@@ -33,9 +43,12 @@ public:
 	void MoveRight(float AxisValue);
 	void LookUp(float AxisValue);
 	void LookRight(float AxisValue);
+	void Interact();
+	void CancelFocus();
 
-	void ReachInFront(FHitResult& HitResult);
+	bool ReachInFront(FHitResult& HitResult);
 	void SetHUDInfoText(FText NewInfoText);
-
+	bool GetPlayerCanMove();
+	void SetPlayerCanMove(bool bNewPlayerCanMove);
 
 };

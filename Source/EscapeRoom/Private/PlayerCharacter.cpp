@@ -5,7 +5,7 @@
 #include "Engine/World.h"
 #include "Components/InputComponent.h"
 #include "EscapeRoomPlayerController.h"
-#include "HUDWidget.h"
+#include "InteractInterface.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -20,6 +20,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ER_PlayerControllerRef = Cast<AEscapeRoomPlayerController>(GetController());
+
 }
 
 // Called every frame
@@ -28,14 +30,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FHitResult HitResult;
-	ReachInFront(HitResult);
-	AActor* HitActor = HitResult.GetActor();
+	bool bHit = ReachInFront(HitResult);
 
-	if(HitActor != nullptr)
+	FocusedActor = HitResult.GetActor();
+
+	IInteractInterface* InteractActor = Cast<IInteractInterface>(FocusedActor);
+	if(InteractActor != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HIT"));
+		SetHUDInfoText(InteractActor->GetInfoText());
 	}
-
+	else
+	{
+		SetHUDInfoText(FText());
+	}
 }
 
 // Called to bind functionality to input
@@ -47,29 +54,67 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Right", this, &APlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::LookUp);
 	PlayerInputComponent->BindAxis("LookRight", this, &APlayerCharacter::LookRight);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
+	PlayerInputComponent->BindAction("Cancel", IE_Pressed, this, &APlayerCharacter::CancelFocus);
 }
 
 void APlayerCharacter::MoveForward(float AxisValue) 
 {
-	AddMovementInput(GetActorForwardVector(), AxisValue);
+	if(bPlayerCanMove)
+	{
+		AddMovementInput(GetActorForwardVector(), AxisValue);
+	}
 }
 
 void APlayerCharacter::MoveRight(float AxisValue) 
 {
-	AddMovementInput(GetActorRightVector(), AxisValue);
+	if(bPlayerCanMove)
+	{
+		AddMovementInput(GetActorRightVector(), AxisValue);
+	}
 }
 
 void APlayerCharacter::LookUp(float AxisValue) 
 {
-	AddControllerPitchInput(AxisValue);
+	if(bPlayerCanMove)
+	{
+		AddControllerPitchInput(AxisValue);
+	}
 }
 
 void APlayerCharacter::LookRight(float AxisValue) 
 {
-	AddControllerYawInput(AxisValue);
+	if(bPlayerCanMove)
+	{
+		AddControllerYawInput(AxisValue);
+	}
 }
 
-void APlayerCharacter::ReachInFront(FHitResult& HitResult)
+void APlayerCharacter::Interact() 
+{
+	if(bPlayerCanMove && FocusedActor != nullptr)
+	{
+		IInteractInterface* InteractActor = Cast<IInteractInterface>(FocusedActor);
+		if(InteractActor != nullptr)
+		{
+			InteractActor->Interact(this);
+		}
+	}
+}
+
+void APlayerCharacter::CancelFocus() 
+{
+	if(ER_PlayerControllerRef != nullptr)
+	{
+		if(ER_PlayerControllerRef->GetFocusWidget() != nullptr)
+		{
+			ER_PlayerControllerRef->SetFocusWidget(nullptr);
+		}
+	}
+	bPlayerCanMove = true;
+}
+
+bool APlayerCharacter::ReachInFront(FHitResult& HitResult)
 {
 	FVector LineTraceStart;
 	FRotator PlayerRotation;
@@ -77,26 +122,23 @@ void APlayerCharacter::ReachInFront(FHitResult& HitResult)
 	GetController()->GetPlayerViewPoint(LineTraceStart, PlayerRotation);
 	FVector LineTraceEnd = LineTraceStart + PlayerRotation.Vector() * PlayerReach;
 	
-	GetWorld()->LineTraceSingleByChannel(HitResult, LineTraceStart, LineTraceEnd, ECC_Visibility);
+	return GetWorld()->LineTraceSingleByChannel(HitResult, LineTraceStart, LineTraceEnd, ECC_Visibility);
 }
 
 void APlayerCharacter::SetHUDInfoText(FText NewInfoText) 
 {
-	AController* ControllerRef = GetController();
-	if(ControllerRef != nullptr)
+	if(ER_PlayerControllerRef != nullptr)
 	{
-		AEscapeRoomPlayerController* ERControllerRef = Cast<AEscapeRoomPlayerController>(ControllerRef);
-		if(ERControllerRef != nullptr)
-		{
-			UUserWidget* UserWidgetRef = ERControllerRef->GetHUD();
-			if(UserWidgetRef != nullptr)
-			{
-				UHUDWidget* HUDWidgetRef = Cast<UHUDWidget>(UserWidgetRef);
-				if(HUDWidgetRef != nullptr)
-				{
-					HUDWidgetRef->SetInfoText(NewInfoText);
-				}
-			}
-		}
+		ER_PlayerControllerRef->SetHUDInfoText(NewInfoText);
 	}
+}
+
+bool APlayerCharacter::GetPlayerCanMove() 
+{
+	return bPlayerCanMove;
+}
+
+void APlayerCharacter::SetPlayerCanMove(bool bNewPlayerCanMove) 
+{
+	bPlayerCanMove = bNewPlayerCanMove;
 }
