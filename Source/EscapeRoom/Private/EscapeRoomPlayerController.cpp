@@ -39,12 +39,15 @@ void AEscapeRoomPlayerController::SetFocusWidget(UUserWidget* NewFocusWidget)
     if(FocusWidget != nullptr)
     {
         FocusWidget->RemoveFromParent();
+        HUD->AddToViewport();
+    }
+    if(NewFocusWidget != nullptr)
+    {
+        HUD->RemoveFromParent();
+        NewFocusWidget->AddToViewport();
+
     }
     FocusWidget = NewFocusWidget;
-    if(FocusWidget != nullptr)
-    {
-        FocusWidget->AddToViewport();
-    }
 }
 
 UUserWidget* AEscapeRoomPlayerController::GetFocusWidget() const
