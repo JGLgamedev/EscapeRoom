@@ -18,10 +18,13 @@ class ESCAPEROOM_API AEscapeRoomPlayerController : public APlayerController
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> HUDClass;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> EndGameClass;
 
 	UPROPERTY()
-	UUserWidget* HUD = nullptr;
-
+	UUserWidget* HUDWidget = nullptr;
+	UPROPERTY()
+	UUserWidget* EndGameWidget = nullptr;
 	UPROPERTY()
 	UUserWidget* FocusWidget = nullptr;
 
@@ -29,10 +32,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UUserWidget* GetHUD() const;
-	void SetHUDInfoText(FText NewHUDInfoText);
-
 	void SetFocusWidget(UUserWidget* NewFocusWidget);
-	UUserWidget* GetFocusWidget() const;
+	void GameEnded();
+
+	UUserWidget* GetHUDWidget() const { return HUDWidget; };
+	UUserWidget* GetFocusWidget() const { return FocusWidget; };
 
 };

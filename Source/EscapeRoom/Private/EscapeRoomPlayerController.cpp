@@ -3,33 +3,16 @@
 
 #include "EscapeRoomPlayerController.h"
 #include "Blueprint/UserWidget.h"
-#include "HUDWidget.h"
+#include "PlayerCharacter.h"
 
 void AEscapeRoomPlayerController::BeginPlay() 
 {
     if(HUDClass != nullptr)
     {
-        HUD = CreateWidget(this, HUDClass);
-        if(HUD != nullptr)
-        {
-            HUD->AddToViewport();
-        }
-    }
-}
-
-UUserWidget* AEscapeRoomPlayerController::GetHUD() const
-{
-    return HUD;
-}
-
-void AEscapeRoomPlayerController::SetHUDInfoText(FText NewHUDInfoText) 
-{
-    if(HUD != nullptr)
-    {
-        UHUDWidget* HUDWidget = Cast<UHUDWidget>(HUD);
+        HUDWidget = CreateWidget(this, HUDClass);
         if(HUDWidget != nullptr)
         {
-            HUDWidget->SetInfoText(NewHUDInfoText);
+            HUDWidget->AddToViewport();
         }
     }
 }
@@ -38,19 +21,39 @@ void AEscapeRoomPlayerController::SetFocusWidget(UUserWidget* NewFocusWidget)
 {
     if(FocusWidget != nullptr)
     {
-        FocusWidget->RemoveFromParent();
-        HUD->AddToViewport();
+        FocusWidget->RemoveFromViewport();
+        HUDWidget->AddToViewport();
     }
     if(NewFocusWidget != nullptr)
     {
-        HUD->RemoveFromParent();
+        HUDWidget->RemoveFromViewport();
         NewFocusWidget->AddToViewport();
 
     }
     FocusWidget = NewFocusWidget;
 }
 
-UUserWidget* AEscapeRoomPlayerController::GetFocusWidget() const
+void AEscapeRoomPlayerController::GameEnded() 
 {
-    return FocusWidget;
+    if(HUDWidget != nullptr && HUDWidget->IsInViewport())
+    {
+        HUDWidget->RemoveFromViewport();
+    }
+    if(FocusWidget != nullptr && FocusWidget->IsInViewport())
+    {
+        FocusWidget->RemoveFromViewport();
+    }
+    if(EndGameClass != nullptr)
+    {
+        EndGameWidget = CreateWidget(this, EndGameClass);
+        if(EndGameWidget != nullptr)
+        {
+            EndGameWidget->AddToViewport();
+        }
+    }
+    APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+    if(ER_PlayerCharacter != nullptr)
+    {
+        ER_PlayerCharacter->SetPlayerCanMove(false);
+    }
 }
