@@ -14,7 +14,7 @@ class UGrabInterface : public UInterface
 };
 
 /**
- * 
+ * Interface for Actor that can be grabbed.
  */
 class ESCAPEROOM_API IGrabInterface
 {

@@ -14,7 +14,7 @@ class UInteractInterface : public UInterface
 };
 
 /**
- * 
+ * Interface for Actor that can be interacted with.
  */
 class ESCAPEROOM_API IInteractInterface
 {
