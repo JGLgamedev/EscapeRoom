@@ -10,7 +10,6 @@
 #include "InteractInterface.h"
 #include "GrabInterface.h"
 
-// Sets default values
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -23,7 +22,6 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm->SetupAttachment(PlayerCamera);
 }
 
-// Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -34,11 +32,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FocusedActor = HitResult.GetActor();
 }
 
-// Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Bind inputs
 	PlayerInputComponent->BindAxis("Forward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Right", this, &APlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::LookUp);

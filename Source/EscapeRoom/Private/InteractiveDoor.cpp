@@ -6,7 +6,6 @@
 #include "Curves/CurveFloat.h"
 
 
-// Sets default values
 AInteractiveDoor::AInteractiveDoor()
 {
 	PrimaryActorTick.bCanEverTick = true;
