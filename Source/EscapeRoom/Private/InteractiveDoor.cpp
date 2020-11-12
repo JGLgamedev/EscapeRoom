@@ -9,7 +9,6 @@
 // Sets default values
 AInteractiveDoor::AInteractiveDoor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	DoorFrameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFrameMesh"));
@@ -18,7 +17,6 @@ AInteractiveDoor::AInteractiveDoor()
 	DoorMesh->SetupAttachment(DoorFrameMesh);
 }
 
-// Called when the game starts or when spawned
 void AInteractiveDoor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -27,7 +25,6 @@ void AInteractiveDoor::BeginPlay()
 	SetupTimeLine();
 }
 
-// Called every frame
 void AInteractiveDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -54,6 +51,7 @@ FText AInteractiveDoor::GetInfoText()
 
 void AInteractiveDoor::Interact(AActor* Caller) 
 {
+	// Animate door depending on state
 	if(bDoorReady)
 	{
 		bDoorReady = false;
@@ -70,6 +68,7 @@ void AInteractiveDoor::Interact(AActor* Caller)
 
 void AInteractiveDoor::TimelineCallback(float Value) 
 {
+	// Set door relative rotation depending on the timeline value
 	float NewYaw = FMath::Lerp(0.f, 90.f, Value);
 	FRotator DoorMeshRot = DoorMesh->GetRelativeRotation();
 	DoorMesh->SetRelativeRotation(FRotator(
@@ -87,6 +86,7 @@ void AInteractiveDoor::TimelineFinishedCallback()
 
 bool AInteractiveDoor::IsDoorClosed() 
 {
+	// Door is considered closed if its relative yaw = 0.f
 	if(DoorMesh->GetRelativeRotation().Yaw == 0.f){
 		return true;
 	}
@@ -98,16 +98,18 @@ bool AInteractiveDoor::IsDoorClosed()
 
 void AInteractiveDoor::SetupTimeLine() 
 {
+	// Delegates
 	FOnTimelineFloat TimelineCallback;
 	FOnTimelineEventStatic TimelineFinishedCallback;
 
 	if(CurveDoor != nullptr)
 	{
+		// Bind callback functions to delegates
 		TimelineCallback.BindUFunction(this, FName{TEXT("TimelineCallback")});
         TimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
-
 		DoorTimeline.AddInterpFloat(CurveDoor, TimelineCallback);
 		DoorTimeline.SetTimelineFinishedFunc(TimelineFinishedCallback);
+		// Timeline does not loop
 		DoorTimeline.SetLooping(false);
 	}
 }
