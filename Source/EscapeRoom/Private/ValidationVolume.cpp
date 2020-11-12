@@ -52,19 +52,14 @@ bool AValidationVolume::IsPlayerCorrect()
 {
 	TArray<AActor*> Altars;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAltar::StaticClass(), Altars);
-	int32 CorrectAltars = 0;
 
 	for(AActor* AltarActor : Altars)
 	{
 		AAltar* CastAltar = Cast<AAltar>(AltarActor);
-		if(CastAltar->CheckValid())
+		if(!CastAltar->CheckValid())
 		{
-			++CorrectAltars;
+			return false;
 		}
 	}
-	if(CorrectAltars == Altars.Num())
-	{
-		return true;
-	}
-	return false;
+	return true;
 }
