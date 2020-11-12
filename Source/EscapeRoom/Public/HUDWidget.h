@@ -14,13 +14,12 @@ class ESCAPEROOM_API UHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	FText InfoText = FText();
-
 public:
 
 	UFUNCTION(BlueprintPure)
 	FText GetInfoText() const;
-	
-	void SetInfoText(FText NewInfoText);
-	
+	UFUNCTION(BlueprintPure)
+	ESlateVisibility GetGrabTextVisibility() const;
+	UFUNCTION(BlueprintPure)
+	ESlateVisibility GetDropTextVisibility() const;
 };

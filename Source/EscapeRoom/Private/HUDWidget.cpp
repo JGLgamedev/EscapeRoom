@@ -2,14 +2,50 @@
 
 
 #include "HUDWidget.h"
-
+#include "PlayerCharacter.h"
+#include "InteractInterface.h"
+#include "GrabInterface.h"
 
 FText UHUDWidget::GetInfoText() const
 {
-    return InfoText;
+    APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+    IInteractInterface* CanInteractActor = Cast<IInteractInterface>(ER_PlayerCharacter->GetFocusedActor());
+
+    if(CanInteractActor != nullptr && ER_PlayerCharacter->GetPlayerCanInteract())
+    {
+        return CanInteractActor->GetInfoText();
+    }
+    else
+    {
+        return FText();
+    }
 }
 
-void UHUDWidget::SetInfoText(FText NewInfoText) 
+ESlateVisibility UHUDWidget::GetGrabTextVisibility() const
 {
-    InfoText = NewInfoText;
+    APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+    IGrabInterface* CanGrabActor = Cast<IGrabInterface>(ER_PlayerCharacter->GetFocusedActor());
+
+    if(ER_PlayerCharacter->GetGrabbedActor() == nullptr && CanGrabActor != nullptr)
+    {
+        return ESlateVisibility::Visible;
+    }
+    else
+    {
+        return ESlateVisibility::Collapsed;
+    }
+}
+
+ESlateVisibility UHUDWidget::GetDropTextVisibility() const
+{
+    APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+    
+    if(ER_PlayerCharacter->GetGrabbedActor() != nullptr)
+    {
+        return ESlateVisibility::Visible;
+    }
+    else
+    {
+        return ESlateVisibility::Collapsed;
+    }
 }
