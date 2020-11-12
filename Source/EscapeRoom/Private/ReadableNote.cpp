@@ -58,6 +58,7 @@ void AReadableNote::Interact(AActor* Caller)
 		if(ER_PlayerCharacter != nullptr)
 		{
 			ER_PlayerCharacter->SetPlayerCanMove(false);
+			ER_PlayerCharacter->SetPlayerCanInteract(false);
 		}
 	}
 }
