@@ -35,9 +35,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FHitResult HitResult;
-	bool bHit = ReachInFront(HitResult);
+	ReachInFront(HitResult);
 	FocusedActor = HitResult.GetActor();
-	// SetHUDText();
 }
 
 // Called to bind functionality to input
