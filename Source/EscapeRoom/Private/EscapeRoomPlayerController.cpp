@@ -3,10 +3,10 @@
 
 #include "EscapeRoomPlayerController.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerCharacter.h"
 
 void AEscapeRoomPlayerController::BeginPlay() 
 {
+    // Creates HUD and adds it to the viewport
     if(HUDClass != nullptr)
     {
         HUDWidget = CreateWidget(this, HUDClass);
@@ -19,22 +19,24 @@ void AEscapeRoomPlayerController::BeginPlay()
 
 void AEscapeRoomPlayerController::SetFocusWidget(UUserWidget* NewFocusWidget) 
 {
+    // Remove current FocusedWidget if it exists
     if(FocusWidget != nullptr)
     {
         FocusWidget->RemoveFromViewport();
         HUDWidget->AddToViewport();
     }
+    // Add new widget to the screen 
     if(NewFocusWidget != nullptr)
     {
         HUDWidget->RemoveFromViewport();
         NewFocusWidget->AddToViewport();
-
     }
     FocusWidget = NewFocusWidget;
 }
 
 void AEscapeRoomPlayerController::GameEnded() 
 {
+    // Remove all widgets from screen
     if(HUDWidget != nullptr && HUDWidget->IsInViewport())
     {
         HUDWidget->RemoveFromViewport();
@@ -43,6 +45,7 @@ void AEscapeRoomPlayerController::GameEnded()
     {
         FocusWidget->RemoveFromViewport();
     }
+    // Create EndGame widget and add it to the screen
     if(EndGameClass != nullptr)
     {
         EndGameWidget = CreateWidget(this, EndGameClass);
@@ -51,9 +54,6 @@ void AEscapeRoomPlayerController::GameEnded()
             EndGameWidget->AddToViewport();
         }
     }
-    APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-    if(ER_PlayerCharacter != nullptr)
-    {
-        ER_PlayerCharacter->SetPlayerCanMove(false);
-    }
+    // Disable Pawn input
+    GetPawn()->DisableInput(this);
 }
