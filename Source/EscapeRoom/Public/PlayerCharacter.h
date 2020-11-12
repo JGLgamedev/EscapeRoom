@@ -6,12 +6,20 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
 class AEscapeRoomPlayerController;
 
 UCLASS()
 class ESCAPEROOM_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* PlayerCamera;
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArm;
 
 	UPROPERTY(EditAnywhere)
 	float PlayerReach = 100.f;
@@ -20,9 +28,10 @@ class ESCAPEROOM_API APlayerCharacter : public ACharacter
 	AActor* FocusedActor = nullptr;
 
 	UPROPERTY()
-	AEscapeRoomPlayerController* ER_PlayerControllerRef = nullptr;
+	AActor* GrabbedActor = nullptr;
 
 	bool bPlayerCanMove = true;
+	bool bPlayerCanInteract = true;
 
 public:
 	// Sets default values for this character's properties
@@ -45,10 +54,17 @@ public:
 	void LookRight(float AxisValue);
 	void Interact();
 	void CancelFocus();
+	void Grab();
+	void QuitGame();
 
 	bool ReachInFront(FHitResult& HitResult);
-	void SetHUDInfoText(FText NewInfoText);
-	bool GetPlayerCanMove();
-	void SetPlayerCanMove(bool bNewPlayerCanMove);
 
+	// Accessors
+	bool GetPlayerCanMove() const { return bPlayerCanMove; }
+	void SetPlayerCanMove(bool bNewPlayerCanMove) { bPlayerCanMove = bNewPlayerCanMove; }
+	bool GetPlayerCanInteract() const { return bPlayerCanInteract; }
+	void SetPlayerCanInteract(bool bNewPlayerCanInteract) { bPlayerCanInteract = bNewPlayerCanInteract; }
+	USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	AActor* GetFocusedActor() const { return FocusedActor; }
+	AActor* GetGrabbedActor() const { return GrabbedActor; }
 };
