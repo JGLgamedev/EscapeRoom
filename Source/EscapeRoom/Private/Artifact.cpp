@@ -4,14 +4,11 @@
 #include "Artifact.h"
 #include "PlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h" 
-
 #include "Engine/StaticMesh.h" 
 #include "Materials/MaterialInstance.h"
 
-// Sets default values
 AArtifact::AArtifact()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
@@ -19,27 +16,14 @@ AArtifact::AArtifact()
 	BaseMesh->SetSimulatePhysics(true);
 }
 
-UStaticMesh* AArtifact::GetBaseMesh() const
-{
-	return BaseMesh->GetStaticMesh();
-}
-
-UMaterialInstance* AArtifact::GetMaterial() const
-{
-	return Cast<UMaterialInstance>(BaseMesh->GetMaterial(0));
-}
-
-FText AArtifact::GetInfoText() 
-{
-	return InfoText;
-}
-
 void AArtifact::Interact(AActor* Caller) 
 {
 	if(Materials.Num() > 0)
 	{
+		// Change mesh material to one from the Materials array
 		BaseMesh->SetMaterial(0, Materials[MaterialsIndex]);
 		++MaterialsIndex;
+		// MaterialsIndex must not be greater the Materials.Num() - 1
 		MaterialsIndex %= Materials.Num();
 	}
 }
@@ -47,24 +31,27 @@ void AArtifact::Interact(AActor* Caller)
 void AArtifact::GrabItem(AActor* Caller) 
 {
 	APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(Caller);
+	// Can only grab if the Player is not already grabbing an actor.
 	if(ER_PlayerCharacter && Grabber == nullptr)
 	{
+		// Deactivate physics and collision
 		BaseMesh->SetSimulatePhysics(false);
 		SetActorEnableCollision(false);
+		// Attach the actor to the end of the Player's SpringArm
 		AttachToComponent(ER_PlayerCharacter->GetSpringArm(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, USpringArmComponent::SocketName);
-		ER_PlayerCharacter->SetPlayerCanInteract(false);
 		Grabber = ER_PlayerCharacter;
 	}
 }
 
 void AArtifact::DropItem() 
 {
+	// Can only drop if hold by a player
 	if(Grabber != nullptr)
 	{
+		// Detach from SpringArm and activate physics and collision
 		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		BaseMesh->SetSimulatePhysics(true);
 		SetActorEnableCollision(true);
-		Grabber->SetPlayerCanInteract(true);
 		Grabber = nullptr;
 	}
 }
