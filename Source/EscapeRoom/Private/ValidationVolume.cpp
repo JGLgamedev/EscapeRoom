@@ -10,10 +10,8 @@
 #include "EscapeRoomPlayerController.h"
 #include "Engine/World.h"
 
-// Sets default values
 AValidationVolume::AValidationVolume()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	ValidationSphere = CreateDefaultSubobject<USphereComponent>("ValidationSphere");
@@ -22,22 +20,24 @@ AValidationVolume::AValidationVolume()
 	ValidationLight->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void AValidationVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Bind overlap function
 	ValidationSphere->OnComponentBeginOverlap.AddDynamic(this, &AValidationVolume::OnOverlapBegin);
 }
 
 void AValidationVolume::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) 
 {
+	// Do nothing if the overlapping actor is not the player
 	APlayerCharacter* ER_PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 	if(ER_PlayerCharacter == nullptr)
 	{
 		return;
 	}
 
+	// Call GameEnded on the PlayerController if the player is correct
 	if(IsPlayerCorrect())
 	{
 		AEscapeRoomPlayerController* ER_PC = Cast<AEscapeRoomPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -50,16 +50,20 @@ void AValidationVolume::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 
 bool AValidationVolume::IsPlayerCorrect() 
 {
+	// Find all Altars actors in the world
 	TArray<AActor*> Altars;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAltar::StaticClass(), Altars);
 
+	// For each altar check if the player was right
 	for(AActor* AltarActor : Altars)
 	{
 		AAltar* CastAltar = Cast<AAltar>(AltarActor);
+		// false if on Altar is wrong
 		if(!CastAltar->CheckValid())
 		{
 			return false;
 		}
 	}
+	// true if all Altars are correct
 	return true;
 }
