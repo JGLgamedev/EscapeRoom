@@ -10,38 +10,45 @@
 class UUserWidget;
 class AEscapeRoomPlayerController;
 
+/**
+ * Actor representing an object that the player can read.
+ * Implements InteractInterface.
+ * Display a widget to the screen when interacted with.
+ */
+
 UCLASS()
 class ESCAPEROOM_API AReadableNote : public AActor, public IInteractInterface
 {
 	GENERATED_BODY()
 
+	/** Actor mesh to be set in the editor */
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
 
+	/** Widget to be dispalyed, to be set in the editor */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> NoteWidgetClass;
 
+	/** Info text for UI, to be set in the editor */
 	UPROPERTY(EditAnywhere)
 	FText InfoText;
 
+	/** Widget instance created during BeginPlay */
 	UPROPERTY()
 	UUserWidget* NoteWidget;
 
+	/** PlayerController reference to add the widget to the screen */
 	UPROPERTY()
 	AEscapeRoomPlayerController* ER_PlayerControllerRef = nullptr;
 
 public:	
-	// Sets default values for this actor's properties
 	AReadableNote();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	// InteractInterface overrides
 	virtual FText GetInfoText() override;
 	virtual void Interact(AActor* Caller) override;
 };
