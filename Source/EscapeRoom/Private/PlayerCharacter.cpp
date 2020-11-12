@@ -23,17 +23,12 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm->SetupAttachment(PlayerCamera);
 }
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Line trace to know if the player is looking at an actor
 	FHitResult HitResult;
 	ReachInFront(HitResult);
 	FocusedActor = HitResult.GetActor();
@@ -88,6 +83,7 @@ void APlayerCharacter::LookRight(float AxisValue)
 
 void APlayerCharacter::Interact() 
 {
+	// Call Interact function if FocusedActor implements InteractInterface and Player can interact with objects
 	if(bPlayerCanInteract && FocusedActor != nullptr)
 	{
 		IInteractInterface* InteractActor = Cast<IInteractInterface>(FocusedActor);
@@ -100,6 +96,7 @@ void APlayerCharacter::Interact()
 
 void APlayerCharacter::CancelFocus() 
 {
+	// Remove focused widget from screen and unlock Player movement and interaction
 	AEscapeRoomPlayerController* ER_PlayerControllerRef = Cast<AEscapeRoomPlayerController>(GetController());
 	if(ER_PlayerControllerRef != nullptr)
 	{
@@ -111,6 +108,7 @@ void APlayerCharacter::CancelFocus()
 
 void APlayerCharacter::Grab() 
 {
+	// Call GrabItem function if FocusedActor implements GrabInterface and Player is not already grabbing an object
 	if(GrabbedActor == nullptr && FocusedActor != nullptr)
 	{
 		IGrabInterface* GrabActor = Cast<IGrabInterface>(FocusedActor);
@@ -120,6 +118,7 @@ void APlayerCharacter::Grab()
 			GrabbedActor = FocusedActor;
 		}
 	}
+	// Drop help actor
 	else
 	{
 		IGrabInterface* GrabActor = Cast<IGrabInterface>(GrabbedActor);
@@ -142,6 +141,7 @@ void APlayerCharacter::QuitGame()
 
 bool APlayerCharacter::ReachInFront(FHitResult& HitResult)
 {
+	// Cast a LineTrace in front of the player viewpoint
 	FVector LineTraceStart;
 	FRotator PlayerRotation;
 

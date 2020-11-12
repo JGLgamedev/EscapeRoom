@@ -10,44 +10,47 @@ class UCameraComponent;
 class USpringArmComponent;
 class AEscapeRoomPlayerController;
 
+/**
+ * Main Player Character class.
+ * Can move, grab and interact with actors
+ */
 UCLASS()
 class ESCAPEROOM_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	/** Player camera */
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* PlayerCamera;
 
+	/** Spring arm to attach grabbed objects to */
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
+	/** How far the player can reach */
 	UPROPERTY(EditAnywhere)
 	float PlayerReach = 100.f;
 
+	/** Actor the player is looking at */
 	UPROPERTY()
 	AActor* FocusedActor = nullptr;
 
+	/** Actor the player is grabbing */
 	UPROPERTY()
 	AActor* GrabbedActor = nullptr;
 
+	/** Player state */
 	bool bPlayerCanMove = true;
 	bool bPlayerCanInteract = true;
 
 public:
-	// Sets default values for this character's properties
 	APlayerCharacter();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Input bindings
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUp(float AxisValue);
@@ -57,6 +60,7 @@ public:
 	void Grab();
 	void QuitGame();
 
+	// Line trace in front a the Player. Called every frame.
 	bool ReachInFront(FHitResult& HitResult);
 
 	// Accessors
