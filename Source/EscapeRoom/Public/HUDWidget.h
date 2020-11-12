@@ -7,7 +7,8 @@
 #include "HUDWidget.generated.h"
 
 /**
- * 
+ * Main HUD class.
+ * Get HUD information from PlayerCharacter.
  */
 UCLASS()
 class ESCAPEROOM_API UHUDWidget : public UUserWidget
