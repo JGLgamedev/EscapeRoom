@@ -8,8 +8,7 @@
 // Sets default values
 AAltar::AAltar()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>("BaseMesh");
 	RootComponent = BaseMesh;
@@ -17,19 +16,17 @@ AAltar::AAltar()
 	TriggerBox->SetupAttachment(RootComponent);
 }
 
-void AAltar::Tick(float DeltaTime) 
+bool AAltar::CheckValid() const
 {
-	
-}
-
-bool AAltar::CheckValid() 
-{
+	// Get all Artifacts inside TriggerBox
 	TArray<AActor*> OverlappingActors;
 	TriggerBox->GetOverlappingActors(OverlappingActors, AArtifact::StaticClass());
+	// false if 0 or more than one Artifact is present
 	if(OverlappingActors.Num() != 1)
 	{
 		return false;
 	}
+	// Compare CorrectMesh and CorrectMaterial to Artifact in TriggerBox.
 	AArtifact* OverlappingArtifact = Cast<AArtifact>(OverlappingActors[0]);
 	return ((OverlappingArtifact->GetBaseMesh() == CorrectMesh) && (OverlappingArtifact->GetMaterial() == CorrectMaterial));
 }
