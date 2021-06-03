@@ -7,7 +7,6 @@
 #include "ValidationVolume.generated.h"
 
 class USphereComponent;
-class USpotLightComponent;
 
 /**
  * Actor representing a volume the Player has to step into to validate his guess.
@@ -21,10 +20,6 @@ class ESCAPEROOM_API AValidationVolume : public AActor
 	/** Actor mesh to be set in the editor */
 	UPROPERTY(VisibleAnywhere, Category = Components)
 	USphereComponent* ValidationSphere;
-
-	/** SpotLight for visual representation */
-	UPROPERTY(VisibleAnywhere, Category = Components)
-	USpotLightComponent* ValidationLight;
 
 public:	
 	AValidationVolume();

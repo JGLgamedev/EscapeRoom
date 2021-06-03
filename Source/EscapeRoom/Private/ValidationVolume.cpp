@@ -3,7 +3,6 @@
 
 #include "ValidationVolume.h"
 #include "Components/SphereComponent.h"
-#include "Components/SpotLightComponent.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Altar.h"
@@ -16,8 +15,6 @@ AValidationVolume::AValidationVolume()
 
 	ValidationSphere = CreateDefaultSubobject<USphereComponent>("ValidationSphere");
 	RootComponent = ValidationSphere;
-	ValidationLight = CreateDefaultSubobject<USpotLightComponent>("ValidationLight");
-	ValidationLight->SetupAttachment(RootComponent);
 }
 
 void AValidationVolume::BeginPlay()
