@@ -45,6 +45,7 @@ void AValidationVolume::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 		{
 			ER_PC->GameEnded();
 		}
+		HandleEndGame();
 	}
 }
 
