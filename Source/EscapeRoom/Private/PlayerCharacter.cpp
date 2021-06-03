@@ -116,7 +116,7 @@ void APlayerCharacter::Grab()
 			GrabbedActor = FocusedActor;
 		}
 	}
-	// Drop help actor
+	// Drop held actor
 	else
 	{
 		IGrabInterface* GrabActor = Cast<IGrabInterface>(GrabbedActor);
