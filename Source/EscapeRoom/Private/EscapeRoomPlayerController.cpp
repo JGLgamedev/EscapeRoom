@@ -6,6 +6,7 @@
 
 void AEscapeRoomPlayerController::BeginPlay() 
 {
+    Super::BeginPlay();
     // Creates HUD and adds it to the viewport
     if(HUDClass != nullptr)
     {
