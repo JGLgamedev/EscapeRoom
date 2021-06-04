@@ -13,7 +13,19 @@ FText UHUDWidget::GetInfoText() const
     IInteractInterface* CanInteractActor = Cast<IInteractInterface>(ER_PlayerCharacter->GetFocusedActor());
     if(CanInteractActor != nullptr && ER_PlayerCharacter->GetPlayerCanInteract())
     {
-        return CanInteractActor->GetInfoText();
+        FText InfoText = CanInteractActor->GetInfoText();
+        if(InfoText.IsEmpty())
+        {
+            return FText();
+        }
+        else if(!InfoText.IsEmpty() && InteractCommand.IsEmpty())
+        {
+            return InfoText;
+        }
+        else
+        {
+            return FText::Join(FText::FromString(TEXT(" : ")), InteractCommand, InfoText);
+        }
     }
     else
     {

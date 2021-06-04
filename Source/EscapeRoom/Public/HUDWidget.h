@@ -15,6 +15,10 @@ class ESCAPEROOM_API UHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	/** Command to display if the player can interact with something */
+	UPROPERTY(EditAnywhere)
+	FText InteractCommand;
+
 public:
 
 	UFUNCTION(BlueprintPure)
